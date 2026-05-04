@@ -17,16 +17,16 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import kotlin.time.Duration.Companion.minutes
 
-class UiTestWithDriver {
+class UiTest {
 
-    /**
-     * Verifies that the "Create changelists automatically" checkbox
-     * can be enabled in Settings → Version Control → Changelists.
-     */
     @ParameterizedTest(name = "split-mode={0}")
     @ValueSource(booleans = [false, true])
     fun createChangelistsAutomaticallyCheckboxCanBeEnabled(splitMode: Boolean) {
         ConfigurationStorage.splitMode(splitMode)
+
+        val licenseKey = requireNotNull(System.getenv("LICENSE_KEY")) {
+            "Environment variable LICENSE_KEY is not set"
+        }
 
         val testContext = Starter
             .newContext(CurrentTestMethod.hyphenateWithClass(), TestCase(
@@ -36,7 +36,7 @@ class UiTestWithDriver {
                 commitHash = "c9b3bfe53ed71e346328ca447a21ec00b10e7793"
             )))
             .setupSdk(jdk21.toSdk())
-            .setLicense(System.getenv("LICENSE_KEY"))
+            .setLicense(licenseKey)
             .prepareProjectCleanImport()
 
         testContext.runIdeWithDriver().useDriverAndCloseIde {
@@ -51,10 +51,10 @@ class UiTestWithDriver {
                     val checkbox = checkBoxWithName("Create changelists automatically")
                     checkbox.waitFound()
 
-                    if (checkbox.isSelected()) checkbox.click() // uncheck first
-                    checkbox.check() // then check
+                    checkbox.uncheck()
+                    checkbox.check()
 
-                    assertTrue(checkbox.isSelected()) {"Expected checkbox to be selected"}
+                    assertTrue(checkbox.isSelected()) { "Expected 'Create changelists automatically' to be selected" }
 
                     okButton.click()
                 }
