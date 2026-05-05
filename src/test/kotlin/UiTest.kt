@@ -24,10 +24,6 @@ class UiTest {
     fun createChangelistsAutomaticallyCheckboxCanBeEnabled(splitMode: Boolean) {
         ConfigurationStorage.splitMode(splitMode)
 
-        val licenseKey = requireNotNull(System.getenv("LICENSE_KEY")) {
-            "Environment variable LICENSE_KEY is not set"
-        }
-
         val testContext = Starter
             .newContext(CurrentTestMethod.hyphenateWithClass(), TestCase(
                 IdeProductProvider.IU, GitHubProject.fromGithub(
@@ -36,7 +32,7 @@ class UiTest {
                 commitHash = "c9b3bfe53ed71e346328ca447a21ec00b10e7793"
             )))
             .setupSdk(jdk21.toSdk())
-            .setLicense(licenseKey)
+            .setLicense(System.getenv("LICENSE_KEY"))
             .prepareProjectCleanImport()
 
         testContext.runIdeWithDriver().useDriverAndCloseIde {
