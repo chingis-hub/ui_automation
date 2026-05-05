@@ -5,12 +5,17 @@ Kotlin UI tests for IntelliJ IDEA using the JetBrains IDE Starter/Driver framewo
 ## Run
 
 ```powershell
+# Windows
 .\gradlew.bat test
+
+# macOS / Linux
+./gradlew test
 ```
 
 Downloads IntelliJ IDEA on first run. Reports in `build/reports/tests/`.
 
-## Administrator privileges
+
+## Administrator privileges (for Windows only)
 
 The IDE requests elevated privileges via `elevator.exe` (JetBrains UAC helper) during startup. To avoid manual UAC prompts mid-test, run the suite as Administrator using the included wrapper script:
 
